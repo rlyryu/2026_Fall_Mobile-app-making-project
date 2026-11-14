@@ -28,11 +28,11 @@ npx expo export --platform android --output-dir <tmp-dir>   # check that Metro c
 
 | Path | Contents |
 |---|---|
-| `src/app/` | Routes only. `(tabs)/` holds the Today, Monthly, Habits and Settings tabs. Also `habit/new`, `habit/[id]/edit`, `categories`, `archive` |
+| `src/app/` | Routes only. `(tabs)/` holds Home (`index`, the main screen), Report (monthly/weekly toggle), Habits and Settings. Also `habit/new`, `habit/[id]/edit`, `categories`, `archive` |
 | `src/lib/` | Pure domain logic with no React or DB, plus `__tests__/`. Most logic belongs here |
 | `src/db/` | SQLite schema/migrations, row mappers, query functions (one file per table) |
 | `src/hooks/` | `useDbQuery`, `useSettings` (context), `useLogicalToday`, data hooks, write hooks |
-| `src/components/` | `common/` (incl. `DayStateMark`, the one visual for a `DayState`), `today/`, `monthly/`, `habits/`, `habit-form/`, `settings/` |
+| `src/components/` | `common/` (incl. `DayStateMark`, the one visual for a `DayState`), `today/` (Home), `report/`, `habits/`, `habit-form/`, `settings/` |
 | `src/i18n/` | i18next setup and `locales/ko.ts` and `en.ts` |
 | `src/constants/theme.ts` | Design tokens (spacing, radius, line width, sizes) |
 | `src/constants/tabs.ts` | Bottom tab list. To add a tab, add one entry here plus a route file |
@@ -70,6 +70,10 @@ npx expo export --platform android --output-dir <tmp-dir>   # check that Metro c
 - **`weekly_count`:** weekly success comes from `getWeekResult` / `getWeeklyProgress`.
   - Days are shown only when done.
   - For rates, a week belongs to the month its first day falls in.
+- **Report rates never mix units:** `getReportRates` (`src/lib/calendar.ts`) returns day-based habits
+  (days) and weekly_count habits (weeks) as two separate rates.
+- **Home** shows today. `‹ ›` can step back to fix past records, but the picked day resets to today when
+  the tab loses focus or the app goes to the background. Report cells are view-only (no jump to a day).
 
 ## Data layer
 
@@ -103,7 +107,8 @@ npx expo export --platform android --output-dir <tmp-dir>   # check that Metro c
 
 ## Status
 
-- **Done:** M1–M4, and patch steps A (Sunday-first weeks, `week.ts`), B (`stats.ts`) and C (monthly tab).
+- **Done:** M1–M4, and patch steps A (Sunday-first weeks, `week.ts`), B (`stats.ts`) and C (Report tab:
+  monthly/weekly views; Today renamed to Home).
 - **Pending:**
   - Patch D: `step_value` migration and "increment" field. Keep it in its own commit.
   - Patch E: habit detail screen at `habit/[id]`. The Habits list currently opens `habit/[id]/edit`.

@@ -1,7 +1,7 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, SectionList, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, AppState, SectionList, StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
 import { EmptyState } from '@/components/common/empty-state';
@@ -16,21 +16,30 @@ import { addDays } from '@/lib/date';
 import { resolveSelectedDate, type TodayItem } from '@/lib/today';
 import type { ISODate } from '@/lib/types';
 
-export default function TodayScreen() {
+/** Home (main screen): today's habits, with ‹ › to fix a past day's records. */
+export default function HomeScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const today = useLogicalToday();
 
-  // `?date=YYYY-MM-DD` selects a past day; without it (or if invalid/future) we show today.
-  const params = useLocalSearchParams<{ date?: string | string[] }>();
-  const dateParam = Array.isArray(params.date) ? params.date[0] : params.date;
-  const date = resolveSelectedDate(dateParam, today);
+  // A past day picked with ‹ ›. null = today. It is reset whenever the user leaves this tab
+  // or the app goes to the background, so Home always reopens on today.
+  const [selected, setSelected] = useState<ISODate | null>(null);
+  const date = resolveSelectedDate(selected ?? undefined, today);
+
+  useFocusEffect(useCallback(() => () => setSelected(null), []));
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'background') setSelected(null);
+    });
+    return () => sub.remove();
+  }, []);
 
   const sections = useTodaySections(date, today);
   const actions = useLogActions(date);
   const [editing, setEditing] = useState<TodayItem | null>(null);
 
-  const goTo = (target: ISODate) => router.setParams({ date: target === today ? undefined : target });
+  const goTo = (target: ISODate) => setSelected(target === today ? null : target);
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.colors.background }]}>

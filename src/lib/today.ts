@@ -17,7 +17,7 @@ export interface TodayItem {
 
 export type TodaySection = CategoryGroup<TodayItem>;
 
-/** A valid, non-future date from a route param, else `today`. */
+/** The picked date if it is valid and not in the future, else `today`. */
 export function resolveSelectedDate(param: string | undefined, today: ISODate): ISODate {
   if (param && isValidISODate(param) && compareISODate(param, today) <= 0) return param;
   return today;

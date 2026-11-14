@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
 import { DayStateMark } from '@/components/common/day-state-mark';
@@ -17,16 +17,13 @@ interface Props {
   logs: LogsByHabit;
   today: ISODate;
   weekStart: WeekStart;
-  /** Called when a (non-future) date header is tapped. */
-  onOpenDay: (date: ISODate) => void;
 }
 
 /**
- * One week of the monthly view: 7 day columns × one row per habit, plus a per-day
- * aggregate bar. Cells are view-only; tapping a date header opens that day in Today.
- * Days outside the month are left blank.
+ * One week of the report: 7 day columns × one row per habit, plus a per-day aggregate bar.
+ * Everything is view-only. Days with `inMonth: false` are left blank.
  */
-export function WeekBlock({ week, habits, logs, today, weekStart, onOpenDay }: Props) {
+export function WeekBlock({ week, habits, logs, today, weekStart }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { dateLocale } = useSettings();
@@ -36,20 +33,17 @@ export function WeekBlock({ week, habits, logs, today, weekStart, onOpenDay }: P
 
   return (
     <View style={[styles.block, { borderBottomColor: theme.colors.outlineVariant }]}>
-      {/* Date header row */}
+      {/* Date header row (view-only) */}
       <View style={styles.row}>
         <View style={styles.nameCell} />
         {week.map((d) => {
           if (!d.inMonth) return <View key={d.date} style={styles.cell} />;
           const future = compareISODate(d.date, today) > 0;
           return (
-            <Pressable
+            <View
               key={d.date}
-              disabled={future}
-              onPress={() => onOpenDay(d.date)}
-              accessibilityRole="button"
-              accessibilityState={{ disabled: future }}
-              accessibilityLabel={t('monthly.openDay', { date: label(d.date) })}
+              accessible
+              accessibilityLabel={label(d.date)}
               style={[styles.cell, styles.headerCell, todayTone(d.date)]}>
               <Text
                 variant="labelMedium"
@@ -59,7 +53,7 @@ export function WeekBlock({ week, habits, logs, today, weekStart, onOpenDay }: P
                 ]}>
                 {Number(d.date.slice(8))}
               </Text>
-            </Pressable>
+            </View>
           );
         })}
       </View>
@@ -80,7 +74,7 @@ export function WeekBlock({ week, habits, logs, today, weekStart, onOpenDay }: P
               <View
                 key={d.date}
                 accessible
-                accessibilityLabel={t('monthly.cell', {
+                accessibilityLabel={t('report.cell', {
                   date: label(d.date),
                   name: h.name,
                   state: t(`dayState.${state}`),
@@ -104,7 +98,7 @@ export function WeekBlock({ week, habits, logs, today, weekStart, onOpenDay }: P
             <View
               key={d.date}
               accessible={agg.scheduled > 0}
-              accessibilityLabel={t('monthly.dayAggregate', {
+              accessibilityLabel={t('report.dayAggregate', {
                 date: label(d.date),
                 done: agg.done,
                 scheduled: agg.scheduled,

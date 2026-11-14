@@ -38,7 +38,9 @@ export const Size = {
   colorPanel: 180,
   /** Space reserved at the bottom of lists so the FAB doesn't cover the last row. */
   fabClearance: 88,
-  /** Monthly grid: habit-name column width, row height, state mark size. */
+  /** Report header: width reserved for a "100%" figure so lines stay aligned. */
+  pctColumn: 40,
+  /** Report grid: habit-name column width, row height, state mark size. */
   monthNameColumn: 84,
   monthCell: 32,
   dayStateMark: 16,

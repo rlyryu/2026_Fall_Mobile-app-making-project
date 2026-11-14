@@ -19,8 +19,8 @@ export interface TabDef {
  * and add one entry here (plus its i18n title key).
  */
 export const TABS: readonly TabDef[] = [
-  { name: 'index', titleKey: 'tabs.today', icon: 'check-circle-outline', iconFocused: 'check-circle' },
-  { name: 'monthly', titleKey: 'tabs.monthly', icon: 'calendar-month-outline', iconFocused: 'calendar-month' },
+  { name: 'index', titleKey: 'tabs.home', icon: 'home-outline', iconFocused: 'home' },
+  { name: 'report', titleKey: 'tabs.report', icon: 'chart-box-outline', iconFocused: 'chart-box' },
   { name: 'habits', titleKey: 'tabs.habits', icon: 'format-list-bulleted', iconFocused: 'format-list-bulleted' },
   { name: 'settings', titleKey: 'tabs.settings', icon: 'cog-outline', iconFocused: 'cog' },
 ];

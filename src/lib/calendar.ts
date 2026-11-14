@@ -1,8 +1,11 @@
-/** Month-calendar layout and month-level aggregates. Pure. */
+/** Report (monthly / weekly) layout and aggregates. Pure. */
 import { addDays, compareISODate, getMonthOf, getMonthRange, type ISOMonth } from './date';
-import { getRate, type LogsByHabit, type Rate, sumRates } from './stats';
+import { getWeeklyProgress } from './progress';
+import { getRate, getWeekResult, type LogsByHabit, type Rate, sumRates, type WeekResult } from './stats';
 import type { HabitRule, ISODate, WeekStart } from './types';
-import { getWeekStart } from './week';
+import { getWeekDates, getWeekStart } from './week';
+
+type HabitWithId = HabitRule & { id: number };
 
 export interface CalendarDay {
   date: ISODate;
@@ -28,6 +31,11 @@ export function buildMonthWeeks(month: ISOMonth, weekStart: WeekStart): Calendar
   return weeks;
 }
 
+/** The 7 days of the week containing `date`, all shown (`inMonth: true`). */
+export function buildWeekDays(date: ISODate, weekStart: WeekStart): CalendarDay[] {
+  return getWeekDates(date, weekStart).map((d) => ({ date: d, inMonth: true }));
+}
+
 /** Whether a habit is active on at least one day of `from..to`. */
 export function isActiveInRange(
   habit: Pick<HabitRule, 'startDate' | 'archivedAt'>,
@@ -40,17 +48,65 @@ export function isActiveInRange(
   );
 }
 
+export interface ReportRates {
+  /** daily / weekdays / biweekly habits. Unit: days. */
+  daily: Rate;
+  /** weekly_count habits. Unit: weeks (a week belongs to the period its first day is in). */
+  weekly: Rate;
+  hasDaily: boolean;
+  hasWeekly: boolean;
+}
+
 /**
- * Overall achievement for a month: the sum of each habit's `getRate` over the month
- * (days for daily/weekdays habits, weeks for weekly_count habits).
+ * Achievement over `from..to`, kept separate by unit so days and weeks are never added
+ * together: each part is the sum of the habits' `getRate`.
  */
-export function getMonthRate(
-  habits: readonly (HabitRule & { id: number })[],
+export function getReportRates(
+  habits: readonly HabitWithId[],
   logs: LogsByHabit,
-  month: ISOMonth,
+  from: ISODate,
+  to: ISODate,
   today: ISODate,
   weekStart: WeekStart,
-): Rate {
-  const { start, end } = getMonthRange(month);
-  return sumRates(habits.map((h) => getRate(h, logs[h.id] ?? {}, start, end, today, weekStart)));
+): ReportRates {
+  const weeklyHabits = habits.filter((h) => h.recurrenceType === 'weekly_count');
+  const dailyHabits = habits.filter((h) => h.recurrenceType !== 'weekly_count');
+  const rate = (list: readonly HabitWithId[]) =>
+    sumRates(list.map((h) => getRate(h, logs[h.id] ?? {}, from, to, today, weekStart)));
+  return {
+    daily: rate(dailyHabits),
+    weekly: rate(weeklyHabits),
+    hasDaily: dailyHabits.length > 0,
+    hasWeekly: weeklyHabits.length > 0,
+  };
+}
+
+export interface WeeklyGoal<H extends HabitWithId = HabitWithId> {
+  habit: H;
+  completedDays: number;
+  target: number;
+  /** 0-1 */
+  ratio: number;
+  result: Exclude<WeekResult, 'inactive'>;
+}
+
+/** Progress of every weekly_count habit active in the week containing `date`. */
+export function getWeeklyGoals<H extends HabitWithId>(
+  habits: readonly H[],
+  logs: LogsByHabit,
+  date: ISODate,
+  today: ISODate,
+  weekStart: WeekStart,
+): WeeklyGoal<H>[] {
+  const start = getWeekStart(date, weekStart);
+  const goals: WeeklyGoal<H>[] = [];
+  for (const habit of habits) {
+    if (habit.recurrenceType !== 'weekly_count') continue;
+    const values = logs[habit.id] ?? {};
+    const result = getWeekResult(habit, values, start, today, weekStart);
+    if (result === 'inactive') continue;
+    const p = getWeeklyProgress(habit, values, start, weekStart);
+    goals.push({ habit, completedDays: p.completedDays, target: p.target, ratio: p.ratio, result });
+  }
+  return goals;
 }
