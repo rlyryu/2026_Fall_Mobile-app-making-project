@@ -1,6 +1,7 @@
 /**
  * App theme: react-native-paper Material 3 (light/dark follows the system), plus a matching
  * navigation theme for expo-router's ThemeProvider so headers/tab bar use the same colors.
+ * Spacing/radius/sizes live in `src/constants/theme.ts`.
  */
 import { DarkTheme, DefaultTheme, type Theme as NavigationTheme } from 'expo-router';
 import { MD3DarkTheme, MD3LightTheme, type MD3Theme } from 'react-native-paper';
@@ -26,11 +27,3 @@ function toNavigationTheme(base: NavigationTheme, paper: MD3Theme): NavigationTh
 
 export const navigationLightTheme = toNavigationTheme(DefaultTheme, paperLightTheme);
 export const navigationDarkTheme = toNavigationTheme(DarkTheme, paperDarkTheme);
-
-export const Spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-} as const;

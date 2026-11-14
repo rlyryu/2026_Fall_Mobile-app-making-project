@@ -6,6 +6,7 @@ const ko = {
     delete: '삭제',
     add: '추가',
     ok: '확인',
+    retry: '다시 시도',
     rename: '이름 변경',
     restore: '복원',
     loading: '불러오는 중…',

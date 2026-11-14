@@ -1,6 +1,6 @@
 import { enUS, ko as koLocale, type Locale } from 'date-fns/locale';
 import { getLocales } from 'expo-localization';
-import { createInstance } from 'i18next';
+import { createInstance, type ParseKeys } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { resolveLanguage } from '@/lib/locale';
@@ -29,9 +29,9 @@ i18n.use(initReactI18next).init({
 });
 
 /** Applies the language setting (called by SettingsProvider when settings load/change). */
-export function applyLanguageSetting(setting: LanguageSetting): AppLanguage {
+export async function applyLanguageSetting(setting: LanguageSetting): Promise<AppLanguage> {
   const lang = resolveLanguage(setting, getDeviceLanguageCode());
-  if (i18n.language !== lang) void i18n.changeLanguage(lang);
+  if (i18n.language !== lang) await i18n.changeLanguage(lang);
   return lang;
 }
 
@@ -40,5 +40,8 @@ const DATE_FNS_LOCALES: Record<AppLanguage, Locale> = { ko: koLocale, en: enUS }
 export function getDateFnsLocale(lang: AppLanguage): Locale {
   return DATE_FNS_LOCALES[lang];
 }
+
+/** Dot-path keys of the translation resource, e.g. 'today.empty'. */
+export type TranslationKey = ParseKeys<'translation'>;
 
 export default i18n;

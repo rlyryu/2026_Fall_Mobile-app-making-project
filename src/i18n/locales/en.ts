@@ -7,6 +7,7 @@ const en: Translation = {
     delete: 'Delete',
     add: 'Add',
     ok: 'OK',
+    retry: 'Try again',
     rename: 'Rename',
     restore: 'Restore',
     loading: 'Loading…',
