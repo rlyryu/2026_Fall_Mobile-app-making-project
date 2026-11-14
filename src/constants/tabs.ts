@@ -20,6 +20,7 @@ export interface TabDef {
  */
 export const TABS: readonly TabDef[] = [
   { name: 'index', titleKey: 'tabs.today', icon: 'check-circle-outline', iconFocused: 'check-circle' },
+  { name: 'monthly', titleKey: 'tabs.monthly', icon: 'calendar-month-outline', iconFocused: 'calendar-month' },
   { name: 'habits', titleKey: 'tabs.habits', icon: 'format-list-bulleted', iconFocused: 'format-list-bulleted' },
   { name: 'settings', titleKey: 'tabs.settings', icon: 'cog-outline', iconFocused: 'cog' },
 ];

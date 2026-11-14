@@ -32,6 +32,21 @@ export async function listHabitsActiveOn(db: SQLiteDatabase, date: ISODate): Pro
   return rows.map(rowToHabit);
 }
 
+/** Habits active on at least one day of `from..to` (incl. ones archived later). */
+export async function listHabitsActiveBetween(
+  db: SQLiteDatabase,
+  from: ISODate,
+  to: ISODate,
+): Promise<Habit[]> {
+  const rows = await db.getAllAsync<HabitRow>(
+    `SELECT * FROM habits
+     WHERE start_date <= ? AND (archived_at IS NULL OR archived_at > ?) ${ORDER}`,
+    to,
+    from,
+  );
+  return rows.map(rowToHabit);
+}
+
 export async function getHabit(db: SQLiteDatabase, id: number): Promise<Habit | null> {
   const row = await db.getFirstAsync<HabitRow>('SELECT * FROM habits WHERE id = ?', id);
   return row ? rowToHabit(row) : null;

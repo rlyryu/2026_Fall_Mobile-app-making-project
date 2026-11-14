@@ -16,6 +16,7 @@ const ko = {
   tabs: {
     today: '오늘',
     habits: '습관',
+    monthly: '월간',
     settings: '설정',
   },
   today: {
@@ -124,6 +125,25 @@ const ko = {
     colorInvalid: '올바른 색상 코드(#RRGGBB)가 아닙니다.',
     startDateInvalid: '올바른 날짜가 아닙니다.',
   },
+  monthly: {
+    prevMonth: '이전 달',
+    nextMonth: '다음 달',
+    rate: '달성률 {{pct}}%',
+    rateNone: '달성률 —',
+    rateDetail: '{{done}}/{{scheduled}}',
+    empty: '이 달에 해당하는 습관이 없어요',
+    cell: '{{date}} {{name}} {{state}}',
+    dayAggregate: '{{date}} {{done}}/{{scheduled}} 달성',
+    openDay: '{{date}} 기록 보기',
+  },
+  dayState: {
+    done: '완료',
+    missed: '미완료',
+    partial: '일부 달성',
+    not_scheduled: '예정 없음',
+    future: '예정',
+    today_pending: '기록 전',
+  },
   weekday: {
     '1': '월',
     '2': '화',
@@ -145,6 +165,8 @@ const ko = {
   dateFormat: {
     header: 'M월 d일 (EEE)',
     full: 'yyyy년 M월 d일',
+    month: 'yyyy년 M월',
+    short: 'M월 d일',
   },
 };
 

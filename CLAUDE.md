@@ -28,11 +28,11 @@ npx expo export --platform android --output-dir <tmp-dir>   # check that Metro c
 
 | Path | Contents |
 |---|---|
-| `src/app/` | Routes only. `(tabs)/` holds the Today, Habits and Settings tabs. Also `habit/new`, `habit/[id]/edit`, `categories`, `archive` |
+| `src/app/` | Routes only. `(tabs)/` holds the Today, Monthly, Habits and Settings tabs. Also `habit/new`, `habit/[id]/edit`, `categories`, `archive` |
 | `src/lib/` | Pure domain logic with no React or DB, plus `__tests__/`. Most logic belongs here |
 | `src/db/` | SQLite schema/migrations, row mappers, query functions (one file per table) |
 | `src/hooks/` | `useDbQuery`, `useSettings` (context), `useLogicalToday`, data hooks, write hooks |
-| `src/components/` | `common/`, `today/`, `habits/`, `habit-form/`, `settings/` |
+| `src/components/` | `common/` (incl. `DayStateMark`, the one visual for a `DayState`), `today/`, `monthly/`, `habits/`, `habit-form/`, `settings/` |
 | `src/i18n/` | i18next setup and `locales/ko.ts` and `en.ts` |
 | `src/constants/theme.ts` | Design tokens (spacing, radius, line width, sizes) |
 | `src/constants/tabs.ts` | Bottom tab list. To add a tab, add one entry here plus a route file |
@@ -63,6 +63,7 @@ npx expo export --platform android --output-dir <tmp-dir>   # check that Metro c
 - **A habit's state on a day comes only from `getDayState` (`src/lib/stats.ts`).**
   - The states are done, missed, partial, not_scheduled, future and today_pending.
   - Every screen must use this function so the same habit and day never look different in two places.
+  - Render a state with `DayStateMark` (`src/components/common/day-state-mark.tsx`).
   - Rates, streaks and month history are in `stats.ts` too.
 - **`at_most`:** no log means "unrecorded" and is never success. A value of 0 is a real record and is kept.
 - **`at_least` and check:** 0 means the same as nothing recorded, so writing 0 deletes the log.
@@ -102,9 +103,8 @@ npx expo export --platform android --output-dir <tmp-dir>   # check that Metro c
 
 ## Status
 
-- **Done:** M1–M4, and patch steps A (Sunday-first weeks, `week.ts`) and B (`stats.ts`).
+- **Done:** M1–M4, and patch steps A (Sunday-first weeks, `week.ts`), B (`stats.ts`) and C (monthly tab).
 - **Pending:**
-  - Patch C: monthly calendar tab.
   - Patch D: `step_value` migration and "increment" field. Keep it in its own commit.
   - Patch E: habit detail screen at `habit/[id]`. The Habits list currently opens `habit/[id]/edit`.
 

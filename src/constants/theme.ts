@@ -38,6 +38,13 @@ export const Size = {
   colorPanel: 180,
   /** Space reserved at the bottom of lists so the FAB doesn't cover the last row. */
   fabClearance: 88,
+  /** Monthly grid: habit-name column width, row height, state mark size. */
+  monthNameColumn: 84,
+  monthCell: 32,
+  dayStateMark: 16,
+  /** Monthly grid: per-day aggregate bar (max height and width). */
+  dayBarHeight: 24,
+  dayBarWidth: 6,
 } as const;
 
 export const Opacity = {

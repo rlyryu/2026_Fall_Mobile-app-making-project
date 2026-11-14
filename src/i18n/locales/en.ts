@@ -17,6 +17,7 @@ const en: Translation = {
   tabs: {
     today: 'Today',
     habits: 'Habits',
+    monthly: 'Monthly',
     settings: 'Settings',
   },
   today: {
@@ -125,6 +126,25 @@ const en: Translation = {
     colorInvalid: 'Not a valid color code (#RRGGBB).',
     startDateInvalid: 'Not a valid date.',
   },
+  monthly: {
+    prevMonth: 'Previous month',
+    nextMonth: 'Next month',
+    rate: 'Completion {{pct}}%',
+    rateNone: 'Completion —',
+    rateDetail: '{{done}}/{{scheduled}}',
+    empty: 'No habits in this month',
+    cell: '{{date}} {{name}} {{state}}',
+    dayAggregate: '{{date}}: {{done}} of {{scheduled}} done',
+    openDay: 'Open {{date}}',
+  },
+  dayState: {
+    done: 'Done',
+    missed: 'Missed',
+    partial: 'Partly done',
+    not_scheduled: 'Not scheduled',
+    future: 'Upcoming',
+    today_pending: 'Not logged yet',
+  },
   weekday: {
     '1': 'Mon',
     '2': 'Tue',
@@ -146,6 +166,8 @@ const en: Translation = {
   dateFormat: {
     header: 'EEE, MMM d',
     full: 'MMM d, yyyy',
+    month: 'MMMM yyyy',
+    short: 'MMM d',
   },
 };
 
