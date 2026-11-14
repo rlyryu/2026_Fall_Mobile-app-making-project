@@ -3,7 +3,7 @@ import type { ComponentProps } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
-import { Opacity, Spacing } from '@/constants/theme';
+import { Opacity, Size, Spacing } from '@/constants/theme';
 
 interface Props {
   title: string;
@@ -17,7 +17,7 @@ export function EmptyState({ title, hint, icon = 'checkbox-blank-circle-outline'
     <View style={styles.container}>
       <MaterialCommunityIcons
         name={icon}
-        size={40}
+        size={Size.emptyStateIcon}
         color={theme.colors.outline}
         accessibilityElementsHidden
         importantForAccessibility="no"

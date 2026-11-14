@@ -46,7 +46,11 @@ export default function RootLayout() {
           <PaperProvider theme={dark ? paperDarkTheme : paperLightTheme}>
             <ThemeProvider value={dark ? navigationDarkTheme : navigationLightTheme}>
               <StatusBar style="auto" />
-              <Stack screenOptions={{ headerShown: false }} />
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="habit/new" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="habit/[id]/edit" options={{ presentation: 'modal' }} />
+              </Stack>
             </ThemeProvider>
           </PaperProvider>
         </SettingsProvider>

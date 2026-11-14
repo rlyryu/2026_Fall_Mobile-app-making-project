@@ -32,6 +32,12 @@ export const Size = {
   habitDot: 10,
   progressBar: 4,
   tabIcon: 24,
+  colorSwatch: 36,
+  emptyStateIcon: 40,
+  /** Height of the color picker's saturation/brightness panel. */
+  colorPanel: 180,
+  /** Space reserved at the bottom of lists so the FAB doesn't cover the last row. */
+  fabClearance: 88,
 } as const;
 
 export const Opacity = {

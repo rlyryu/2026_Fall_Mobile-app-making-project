@@ -60,3 +60,11 @@ export function isBiweeklyActive(startDate: ISODate, date: ISODate, weekStart: W
 export function orderedWeekdays(weekStart: WeekStart): IsoWeekday[] {
   return weekStart === 'sun' ? [7, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 7];
 }
+
+/** Selected ISO weekdays in display order (e.g. for "Sun · Mon · Wed" summaries). */
+export function sortWeekdaysForDisplay(
+  days: readonly IsoWeekday[],
+  weekStart: WeekStart,
+): IsoWeekday[] {
+  return orderedWeekdays(weekStart).filter((d) => days.includes(d));
+}

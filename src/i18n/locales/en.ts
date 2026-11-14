@@ -49,8 +49,8 @@ const en: Translation = {
     recurrenceWeekdays: 'Weekly · {{days}}',
     recurrenceBiweekly: 'Every other week · {{days}}',
     recurrenceWeeklyCount: '{{count}}× a week',
-    goalAtLeast: 'At least {{value}}{{unit}}',
-    goalAtMost: 'At most {{value}}{{unit}}',
+    goalAtLeast: 'At least {{value}} {{unit}}',
+    goalAtMost: 'At most {{value}} {{unit}}',
   },
   habitForm: {
     titleNew: 'New habit',
@@ -133,6 +133,15 @@ const en: Translation = {
     '5': 'Fri',
     '6': 'Sat',
     '7': 'Sun',
+  },
+  weekdayLong: {
+    '1': 'Monday',
+    '2': 'Tuesday',
+    '3': 'Wednesday',
+    '4': 'Thursday',
+    '5': 'Friday',
+    '6': 'Saturday',
+    '7': 'Sunday',
   },
   dateFormat: {
     header: 'EEE, MMM d',
