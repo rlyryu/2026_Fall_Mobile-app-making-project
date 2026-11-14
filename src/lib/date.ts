@@ -1,0 +1,107 @@
+/**
+ * Logical-date utilities.
+ *
+ * Rules (see CLAUDE.md):
+ * - A date is a local `YYYY-MM-DD` string. Never use `toISOString()` or
+ *   `new Date('YYYY-MM-DD')` (both go through UTC).
+ * - "Today" is computed only by `getLogicalDate(now, dayStartHour)`.
+ * - Date arithmetic goes through local-midnight `Date`s and date-fns
+ *   calendar-day functions, so DST transitions cannot shift a date.
+ */
+import {
+  addDays as dfAddDays,
+  differenceInCalendarDays,
+  startOfWeek as dfStartOfWeek,
+} from 'date-fns';
+
+import type { ISODate, IsoWeekday, WeekStart } from './types';
+
+const ISO_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+const pad2 = (n: number) => String(n).padStart(2, '0');
+
+/** True if `s` is a real calendar date in `YYYY-MM-DD` form. */
+export function isValidISODate(s: string): boolean {
+  const m = ISO_DATE_RE.exec(s);
+  if (!m) return false;
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const d = Number(m[3]);
+  const date = new Date(y, mo - 1, d);
+  return date.getFullYear() === y && date.getMonth() === mo - 1 && date.getDate() === d;
+}
+
+/** Parses `YYYY-MM-DD` into a `Date` at local midnight. Throws on invalid input. */
+export function parseISODate(s: ISODate): Date {
+  if (!isValidISODate(s)) throw new Error(`Invalid date string: ${s}`);
+  const [y, mo, d] = s.split('-').map(Number);
+  return new Date(y, mo - 1, d);
+}
+
+/** Formats the local calendar date of `date` as `YYYY-MM-DD`. */
+export function formatISODate(date: Date): ISODate {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+}
+
+/**
+ * The single source of truth for "which day is it".
+ * Times before `dayStartHour` (local) belong to the previous calendar day.
+ */
+export function getLogicalDate(now: Date, dayStartHour = 0): ISODate {
+  if (!Number.isInteger(dayStartHour) || dayStartHour < 0 || dayStartHour > 23) {
+    throw new Error(`dayStartHour must be an integer 0-23, got ${dayStartHour}`);
+  }
+  const calendarDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const logical = now.getHours() < dayStartHour ? dfAddDays(calendarDay, -1) : calendarDay;
+  return formatISODate(logical);
+}
+
+export function addDays(date: ISODate, amount: number): ISODate {
+  return formatISODate(dfAddDays(parseISODate(date), amount));
+}
+
+/** Calendar-day difference `later - earlier`. */
+export function diffInDays(later: ISODate, earlier: ISODate): number {
+  return differenceInCalendarDays(parseISODate(later), parseISODate(earlier));
+}
+
+/** `YYYY-MM-DD` strings sort lexicographically in date order. */
+export function compareISODate(a: ISODate, b: ISODate): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/** ISO weekday of a date: 1 = Monday ... 7 = Sunday. */
+export function getIsoWeekday(date: ISODate): IsoWeekday {
+  const jsDay = parseISODate(date).getDay(); // 0 = Sunday
+  return (jsDay === 0 ? 7 : jsDay) as IsoWeekday;
+}
+
+export function weekStartsOn(weekStart: WeekStart): 0 | 1 {
+  return weekStart === 'sun' ? 0 : 1;
+}
+
+/** First day of the week containing `date`. */
+export function startOfWeek(date: ISODate, weekStart: WeekStart): ISODate {
+  return formatISODate(
+    dfStartOfWeek(parseISODate(date), { weekStartsOn: weekStartsOn(weekStart) }),
+  );
+}
+
+/** The 7 dates of the week containing `date`, in order. */
+export function getWeekDates(date: ISODate, weekStart: WeekStart): ISODate[] {
+  const first = startOfWeek(date, weekStart);
+  return Array.from({ length: 7 }, (_, i) => addDays(first, i));
+}
+
+/**
+ * Number of whole weeks from the week containing `from` to the week containing `to`
+ * (0 = same week, negative if `to` is in an earlier week).
+ */
+export function weeksBetween(from: ISODate, to: ISODate, weekStart: WeekStart): number {
+  return Math.round(diffInDays(startOfWeek(to, weekStart), startOfWeek(from, weekStart)) / 7);
+}
+
+/** ISO weekdays ordered for display according to the week start setting. */
+export function orderedWeekdays(weekStart: WeekStart): IsoWeekday[] {
+  return weekStart === 'sun' ? [7, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 7];
+}
