@@ -21,7 +21,7 @@ import { orderedWeekdays } from '@/lib/week';
 import { CategoryField } from './category-field';
 import { ChoiceChips } from './choice-chips';
 import { ColorField } from './color-field';
-import { FormSection } from './form-section';
+import { FormSection } from '@/components/common/form-section';
 import { StartDateField } from './start-date-field';
 
 interface Props {
