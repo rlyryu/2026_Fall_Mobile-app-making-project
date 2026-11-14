@@ -4,12 +4,8 @@ import {
   formatISODate,
   getIsoWeekday,
   getLogicalDate,
-  getWeekDates,
   isValidISODate,
-  orderedWeekdays,
   parseISODate,
-  startOfWeek,
-  weeksBetween,
 } from '../date';
 
 const at = (y: number, mo: number, d: number, h: number, mi = 0) => new Date(y, mo - 1, d, h, mi);
@@ -97,42 +93,6 @@ describe('date arithmetic', () => {
   });
 });
 
-describe('weeks', () => {
-  it('start of week respects week_start', () => {
-    // 2025-12-28 is a Sunday
-    expect(startOfWeek('2025-12-28', 'mon')).toBe('2025-12-22');
-    expect(startOfWeek('2025-12-28', 'sun')).toBe('2025-12-28');
-    // 2026-01-01 is a Thursday
-    expect(startOfWeek('2026-01-01', 'mon')).toBe('2025-12-29');
-    expect(startOfWeek('2026-01-01', 'sun')).toBe('2025-12-28');
-  });
-
-  it('lists the 7 dates of the week', () => {
-    expect(getWeekDates('2026-01-01', 'mon')).toEqual([
-      '2025-12-29',
-      '2025-12-30',
-      '2025-12-31',
-      '2026-01-01',
-      '2026-01-02',
-      '2026-01-03',
-      '2026-01-04',
-    ]);
-  });
-
-  it('counts weeks between dates', () => {
-    expect(weeksBetween('2025-12-17', '2025-12-21', 'mon')).toBe(0);
-    expect(weeksBetween('2025-12-17', '2025-12-22', 'mon')).toBe(1);
-    expect(weeksBetween('2025-12-17', '2026-01-01', 'mon')).toBe(2);
-    expect(weeksBetween('2025-12-17', '2025-12-21', 'sun')).toBe(1);
-    expect(weeksBetween('2026-01-01', '2025-12-17', 'mon')).toBe(-2);
-  });
-
-  it('orders weekdays by week start', () => {
-    expect(orderedWeekdays('mon')).toEqual([1, 2, 3, 4, 5, 6, 7]);
-    expect(orderedWeekdays('sun')).toEqual([7, 1, 2, 3, 4, 5, 6]);
-  });
-});
-
 // jest.global-setup.js sets TZ=America/New_York. If the suite runs in another zone,
 // these are skipped (visibly) rather than passing without exercising DST.
 const runsInNewYork =
@@ -147,7 +107,6 @@ const runsInNewYork =
     expect(addDays('2026-10-31', 1)).toBe('2026-11-01');
     expect(addDays('2026-11-01', 1)).toBe('2026-11-02');
     expect(diffInDays('2026-03-09', '2026-03-07')).toBe(2);
-    expect(weeksBetween('2026-03-02', '2026-03-09', 'mon')).toBe(1);
   });
 
   it('computes logical date on a DST day', () => {

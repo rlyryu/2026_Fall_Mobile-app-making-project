@@ -87,6 +87,6 @@ export interface AppSettings {
 
 export const DEFAULT_SETTINGS: AppSettings = {
   language: 'system',
-  weekStart: 'mon',
+  weekStart: 'sun',
   dayStartHour: 0,
 };

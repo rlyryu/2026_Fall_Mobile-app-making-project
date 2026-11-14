@@ -76,20 +76,20 @@ describe('mappers', () => {
   });
 
   it('builds settings with defaults for missing/invalid values', () => {
-    expect(rowsToSettings([])).toEqual({ language: 'system', weekStart: 'mon', dayStartHour: 0 });
+    expect(rowsToSettings([])).toEqual({ language: 'system', weekStart: 'sun', dayStartHour: 0 });
     expect(
       rowsToSettings([
         { key: 'language', value: 'ko' },
-        { key: 'week_start', value: 'sun' },
+        { key: 'week_start', value: 'mon' },
         { key: 'day_start_hour', value: '4' },
       ]),
-    ).toEqual({ language: 'ko', weekStart: 'sun', dayStartHour: 4 });
+    ).toEqual({ language: 'ko', weekStart: 'mon', dayStartHour: 4 });
     expect(
       rowsToSettings([
         { key: 'language', value: 'fr' },
         { key: 'week_start', value: 'tue' },
         { key: 'day_start_hour', value: '24' },
       ]),
-    ).toEqual({ language: 'system', weekStart: 'mon', dayStartHour: 0 });
+    ).toEqual({ language: 'system', weekStart: 'sun', dayStartHour: 0 });
   });
 });

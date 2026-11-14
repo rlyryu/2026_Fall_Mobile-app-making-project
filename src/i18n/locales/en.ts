@@ -110,6 +110,7 @@ const en: Translation = {
     weekStart: 'Week starts on',
     monday: 'Monday',
     sunday: 'Sunday',
+    weekStartHint: 'Changing this can change which past weeks count as met for "N times a week" habits. Your stored records are not modified.',
     dayStartHour: 'Day starts at',
     dayStartHourHint: 'Anything before this time counts as the previous day.',
     hour: '{{hour}}:00',

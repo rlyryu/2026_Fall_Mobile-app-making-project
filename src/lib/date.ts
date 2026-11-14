@@ -8,13 +8,9 @@
  * - Date arithmetic goes through local-midnight `Date`s and date-fns
  *   calendar-day functions, so DST transitions cannot shift a date.
  */
-import {
-  addDays as dfAddDays,
-  differenceInCalendarDays,
-  startOfWeek as dfStartOfWeek,
-} from 'date-fns';
+import { addDays as dfAddDays, differenceInCalendarDays } from 'date-fns';
 
-import type { ISODate, IsoWeekday, WeekStart } from './types';
+import type { ISODate, IsoWeekday } from './types';
 
 const ISO_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -76,32 +72,29 @@ export function getIsoWeekday(date: ISODate): IsoWeekday {
   return (jsDay === 0 ? 7 : jsDay) as IsoWeekday;
 }
 
-export function weekStartsOn(weekStart: WeekStart): 0 | 1 {
-  return weekStart === 'sun' ? 0 : 1;
+/** Calendar month, `YYYY-MM`. */
+export type ISOMonth = string;
+
+export function getMonthOf(date: ISODate): ISOMonth {
+  return date.slice(0, 7);
 }
 
-/** First day of the week containing `date`. */
-export function startOfWeek(date: ISODate, weekStart: WeekStart): ISODate {
-  return formatISODate(
-    dfStartOfWeek(parseISODate(date), { weekStartsOn: weekStartsOn(weekStart) }),
-  );
+function parseMonth(month: ISOMonth): { year: number; monthIndex: number } {
+  const m = /^(\d{4})-(\d{2})$/.exec(month);
+  if (!m || Number(m[2]) < 1 || Number(m[2]) > 12) throw new Error(`Invalid month: ${month}`);
+  return { year: Number(m[1]), monthIndex: Number(m[2]) - 1 };
 }
 
-/** The 7 dates of the week containing `date`, in order. */
-export function getWeekDates(date: ISODate, weekStart: WeekStart): ISODate[] {
-  const first = startOfWeek(date, weekStart);
-  return Array.from({ length: 7 }, (_, i) => addDays(first, i));
+/** First and last date of a month. */
+export function getMonthRange(month: ISOMonth): { start: ISODate; end: ISODate } {
+  const { year, monthIndex } = parseMonth(month);
+  return {
+    start: formatISODate(new Date(year, monthIndex, 1)),
+    end: formatISODate(new Date(year, monthIndex + 1, 0)),
+  };
 }
 
-/**
- * Number of whole weeks from the week containing `from` to the week containing `to`
- * (0 = same week, negative if `to` is in an earlier week).
- */
-export function weeksBetween(from: ISODate, to: ISODate, weekStart: WeekStart): number {
-  return Math.round(diffInDays(startOfWeek(to, weekStart), startOfWeek(from, weekStart)) / 7);
-}
-
-/** ISO weekdays ordered for display according to the week start setting. */
-export function orderedWeekdays(weekStart: WeekStart): IsoWeekday[] {
-  return weekStart === 'sun' ? [7, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 7];
+export function addMonths(month: ISOMonth, amount: number): ISOMonth {
+  const { year, monthIndex } = parseMonth(month);
+  return getMonthOf(formatISODate(new Date(year, monthIndex + amount, 1)));
 }

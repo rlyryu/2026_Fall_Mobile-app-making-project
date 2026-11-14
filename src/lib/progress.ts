@@ -1,5 +1,5 @@
 import { isValueCompleted } from './completion';
-import { getWeekDates } from './date';
+import { getWeekDates } from './week';
 import { isHabitDueOn } from './recurrence';
 import type { HabitRule, ISODate, WeekStart } from './types';
 

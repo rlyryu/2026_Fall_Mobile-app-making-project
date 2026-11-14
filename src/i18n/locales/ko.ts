@@ -109,6 +109,7 @@ const ko = {
     weekStart: '주 시작 요일',
     monday: '월요일',
     sunday: '일요일',
+    weekStartHint: '주 시작 요일을 바꾸면 "주 N회" 습관의 과거 주간 달성 여부가 다르게 계산될 수 있어요. 저장된 기록은 바뀌지 않습니다.',
     dayStartHour: '하루 시작 시각',
     dayStartHourHint: '이 시각 전까지는 전날로 기록됩니다.',
     hour: '{{hour}}시',

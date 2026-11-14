@@ -1,4 +1,5 @@
-import { compareISODate, getIsoWeekday, weeksBetween } from './date';
+import { compareISODate, getIsoWeekday } from './date';
+import { isBiweeklyActive } from './week';
 import type { HabitRule, ISODate, WeekStart } from './types';
 
 /**
@@ -31,7 +32,7 @@ export function isHabitDueOn(habit: HabitRule, date: ISODate, weekStart: WeekSta
     case 'weekdays': {
       if (!habit.daysOfWeek.includes(getIsoWeekday(date))) return false;
       if (habit.recurrenceInterval === 2) {
-        return weeksBetween(habit.startDate, date, weekStart) % 2 === 0;
+        return isBiweeklyActive(habit.startDate, date, weekStart);
       }
       return true;
     }
